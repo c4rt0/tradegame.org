@@ -26,13 +26,11 @@ trade_env\Scripts\activate.bat
 pip install -r backend/requirements.txt
 ```
 
-(If pip doesnt work, use code below and run pip install again:
+If pip doesnt work, use code below and run pip install again:
 
 ```bash
 python -m pip install -U --force pip
 ```
-
-)
 
 6. Deactivate the virtual environment
 
@@ -80,15 +78,14 @@ trade_env\Scripts\activate.bat
 uvicorn main:app --reload
 ```
 
-(If it doesnt work, use:
+If it doesnt work, use:
 
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-)
-
 4. The FastAPI server will be hosted at its default port 8000
+
 5. To access SwaggerUI for API testing and documentation, goto [http://localhost:8000/docs](http://localhost:8000/docs)
 
 #### C. React Frontend
