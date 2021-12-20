@@ -9,21 +9,30 @@
 1. Create virtual environment (called "farm_env" or whatever you like) using the requirements.txt
 
 ```bash
-python3 -m venv farm_env
+python3 -m venv trade_env
 ```
 
 3. Activate the virtual environemnt
 
 ```bash
-farm_env\Scripts\activate.bat
+trade_env\Scripts\activate.bat
 ```
 
 4. Navigate to the root directory (where the three directories backend, database and frontend are present)
+
 5. Install Python packages to the virtual environment
 
 ```bash
 pip install -r backend/requirements.txt
 ```
+
+(If pip doesnt work, use code below and run pip install again:
+
+```bash
+python -m pip install -U --force pip
+```
+
+)
 
 6. Deactivate the virtual environment
 
@@ -62,7 +71,7 @@ mongod --dbpath=database
 2. Activate the virtual environemnt
 
 ```bash
-farm_env\Scripts\activate.bat
+trade_env\Scripts\activate.bat
 ```
 
 3. Start FastAPI server
@@ -70,6 +79,14 @@ farm_env\Scripts\activate.bat
 ```bash
 uvicorn main:app --reload
 ```
+
+(If it doesnt work, use:
+
+```bash
+python -m uvicorn main:app --reload
+```
+
+)
 
 4. The FastAPI server will be hosted at its default port 8000
 5. To access SwaggerUI for API testing and documentation, goto [http://localhost:8000/docs](http://localhost:8000/docs)

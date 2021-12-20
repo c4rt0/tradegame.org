@@ -1,0 +1,8 @@
+# Development settings
+DOMAIN=tradegame.org
+ADMIN_EMAIL=admin@${DOMAIN}
+ROOT_URL=${DOMAIN}/app
+
+# Data Base settings
+DB_USER="user_name"
+DB_NAME="db_name"

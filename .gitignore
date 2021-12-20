@@ -6,3 +6,5 @@ frontend/node_modules/
 
 backend/tradegame_venv/
 backend/main_copy.py
+
+backend/.env

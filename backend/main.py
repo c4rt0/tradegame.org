@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
-
+import os
 from fastapi.middleware.cors import CORSMiddleware
 import motor.motor_asyncio
 from fastapi import FastAPI, Request, Depends
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.db import MongoDBUserDatabase
 from fastapi_users.authentication import CookieAuthentication, JWTAuthentication
+# Importing dotenv to avoid sensitive data leak to opensource repo
+
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
 
 # --- MongoDB Setup -----------------------------------------------------------
 # MongoDB Configurations
+DB_USER = os.getenv("DB_USER")
+DB_NAME = os.getenv("DB_NAME")
 
-########## REPLACE <user> <password> <cluster_name> and <db_name> !!!!!!!!!!!! ##########
-
-DATABASE_URL = "mongodb+srv://<user>:<password>@<cluster_name>.dmvrd.mongodb.net/<db_name>?retryWrites=true&w=majority"
+DATABASE_URL = f"mongodb+srv://{DB_USER}:{DB_USER}@tradecluster0.dmvrd.mongodb.net/{DB_NAME}?retryWrites=true&w=majority"
 client = motor.motor_asyncio.AsyncIOMotorClient(
     DATABASE_URL, uuidRepresentation="standard"
 )
 # MongoDB database instance ("DB" by default, can be changed)
-database = client["<db_name>"]
+database = client[f"{DB_NAME}"]
 
 # MongoDB users collection instance ("users" by default, can be changed)
 collection = database["users"]
