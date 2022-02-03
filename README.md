@@ -12,10 +12,22 @@
 python3 -m venv trade_env
 ```
 
+or \*\*
+
+```bash
+virtualenv tradegame_venv
+```
+
 3. Activate the virtual environemnt
 
 ```bash
 trade_env\Scripts\activate.bat
+```
+
+or \*\*
+
+```bash
+source tradegame_venv/bin/activate
 ```
 
 4. Navigate to the root directory (where the three directories backend, database and frontend are present)
@@ -55,13 +67,15 @@ npm install
 #### A. MongoDB Database
 
 1. Navigate to the root directory (where the three directories backend, database and frontend are present) or start your existing MongoDB server
-2. Start MongoDB server
+2. Make sure you have MongoDB installed on your machine and system variable path is set correctly.
+   More information on MongoDB installation you can find [HERE, on my github pages](https://c4rt0.github.io/Fedora/)
+3. Start MongoDB server
 
 ```bash
 mongod --dbpath=database
 ```
 
-3. The MongoDB server will be hosted at its default port 27017
+4. The MongoDB server will be hosted at its default port 27017
 
 #### B. Python/FastAPI Backend
 
