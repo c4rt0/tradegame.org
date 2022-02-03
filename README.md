@@ -68,7 +68,9 @@ npm install
 
 1. Navigate to the root directory (where the three directories backend, database and frontend are present) or start your existing MongoDB server
 2. Make sure you have MongoDB installed on your machine and system variable path is set correctly.
-   More information on MongoDB installation you can find [HERE, on my github pages](https://c4rt0.github.io/Fedora/)
+
+More information on MongoDB installation you can find [HERE](https://c4rt0.github.io/Fedora/), on my github pages, regarding Fedora 35 installation.
+
 3. Start MongoDB server
 
 ```bash
