@@ -2,9 +2,7 @@
 
 #### A. MongoDB Database
 
-
 1. Install MongoDB
-
 
 #### B. Python/FastAPI Backend
 
