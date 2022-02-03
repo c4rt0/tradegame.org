@@ -4,6 +4,8 @@
 
 1. Install MongoDB
 
+Fedora 35 + installation instructioncan be found [HERE](https://c4rt0.github.io/Fedora/), on my GitHub Pages.
+
 #### B. Python/FastAPI Backend
 
 1. Create virtual environment (called "farm_env" or whatever you like) using the requirements.txt
@@ -69,7 +71,7 @@ npm install
 1. Navigate to the root directory (where the three directories backend, database and frontend are present) or start your existing MongoDB server
 2. Make sure you have MongoDB installed on your machine and system variable path is set correctly.
 
-More information in relation to MongoDB installation on Fedora 35+ you can find [HERE](https://c4rt0.github.io/Fedora/), on my GitHub Pages.
+Again: [GitHub Pages](https://c4rt0.github.io/Fedora/) regarding MongoDB installation on Fedora 35.
 
 3. Start MongoDB server
 
