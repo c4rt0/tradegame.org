@@ -102,11 +102,22 @@ If it doesnt work, use:
 python -m uvicorn main:app --reload
 ```
 
-If above return an error: 
+\*\*\* If above return an error:
+
 ```bash
 ERROR:    Error loading ASGI app. Could not import module "app".
 ```
-It means you are not in the 'backend' directory.
+
+It probably means your database is not running, or you are trying to execute uvicorn server in the incorrect directory. Your new MongoDB installation might require super user privelages.
+
+Try:
+
+```bash
+sudo mkdir /var/lib/mongodb
+sudo mkdir /var/log/mongodb
+sudo service mongod start
+sudo mongod --dbpath=database
+```
 
 4. The FastAPI server will be hosted at its default port 8000
 
