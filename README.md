@@ -119,6 +119,8 @@ sudo service mongod start
 sudo mongod --dbpath=database
 ```
 
+Also, make sure your .env file is set up according to provided intructions, and your remote MongoDB Cluster (https://cloud.mongodb.com/) is up and running.
+
 4. The FastAPI server will be hosted at its default port 8000
 
 5. To access SwaggerUI for API testing and documentation, goto [http://localhost:8000/docs](http://localhost:8000/docs)
