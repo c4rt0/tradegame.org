@@ -102,6 +102,12 @@ If it doesnt work, use:
 python -m uvicorn main:app --reload
 ```
 
+If above return an error: 
+```bash
+ERROR:    Error loading ASGI app. Could not import module "app".
+```
+It means you are not in the 'backend' directory.
+
 4. The FastAPI server will be hosted at its default port 8000
 
 5. To access SwaggerUI for API testing and documentation, goto [http://localhost:8000/docs](http://localhost:8000/docs)

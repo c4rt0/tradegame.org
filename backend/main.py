@@ -119,6 +119,10 @@ origins = [
     "http://localhost:3000"
 ]
 
+print(f'          ')
+print(f'          Visit API docs at: {origins[1]}/docs')
+print(f'          ')
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
