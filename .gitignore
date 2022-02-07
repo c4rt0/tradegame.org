@@ -9,4 +9,5 @@ backend/tradegame_venv/
 
 # Files
 backend/.env
+backend/alpaca/.env
 backend/requirements2.txt
