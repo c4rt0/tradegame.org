@@ -116,6 +116,17 @@ Try:
 sudo mkdir /var/lib/mongodb
 sudo mkdir /var/log/mongodb
 sudo service mongod start
+```
+
+try also:
+
+```bash
+sudo service mongod restart
+```
+
+then:
+
+```bash
 sudo mongod --dbpath=database
 ```
 
