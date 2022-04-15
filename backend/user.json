@@ -1,0 +1,29 @@
+{
+    "_id": "stuff",
+    "username": "JohnDoe",
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john@doe.com",
+    "profile_image": "https://google.ci/john.jpg",
+    "password": "password_hash",
+    "created": 123123,
+    "portfolio_value": 10000.00,
+    "cash": 10000.00,
+    "portfolio": {
+        "AAPL": {
+            "shares": 100,
+            "buy": 133.0,
+            "buy_timestamp": 123123123123
+        }
+    },
+    "history": {
+        "121212": {
+            "symbol": "APPL",
+            "shares": 100,
+            "buy": 133.0,
+            "sell": 150.0,
+            "buy_timestamp": 123123123123,
+            "sell_timestamp": 23423424234234
+        }
+    }
+}
