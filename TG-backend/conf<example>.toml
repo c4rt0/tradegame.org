@@ -1,0 +1,17 @@
+[package]
+name = "rest_api"
+version = 1.0
+
+[database]
+url = "mongodb://user:password123@localhost:27017"
+database_name = "trade_game_db"
+
+[Service]
+jwt_secret="typeInYourKey"
+jwt_algo="typeInYourKey"
+admin_token = "typeInYourKey"
+
+
+[alpaca]
+api_id = "typeInYourKey"
+api_secret = "typeInYourKey"
