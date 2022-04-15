@@ -1,5 +1,7 @@
 # Environmental Directories
 backend/__pycache__/
+backend/.pytest_cache
+.mongo-volume
 
 database/
 
@@ -10,3 +12,4 @@ backend/tradegame_venv/
 # Files
 backend/.env
 backend/requirements2.txt
+
