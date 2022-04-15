@@ -1,17 +1,16 @@
 # Environmental Directories
-backend/__pycache__/
-backend/.pytest_cache
+TG-backend/__pycache__/
+TG-backend/.pytest_cache
 .mongo-volume
 node_modules/
 database/
 
 frontend/node_modules/
 
-backend/tradegame_venv/
+TG-backend/tradegame_venv/
 
 # Files
-backend/.env
-backend/requirements2.txt
-backend/venv/
+TG-backend/.env
+TG-backend/venv/
 __pycache__
 .DS_Store
