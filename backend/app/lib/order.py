@@ -1,6 +1,7 @@
 import time
 from fastapi.encoders import jsonable_encoder
 import uuid
+import datetime
 
 from .alpaca import get_stocks_from_db
 from ..dao.user import get_user, update_cash, insert_portfolio, remove_portfolio, insert_history
@@ -30,15 +31,13 @@ async def sell_order(symbol: str, shares: int, user_id: str):
             if portfolio_data["shares"] > shares:
                 earnings = shares * stock["price"]
                 new_cash_balance = user_data["cash"] + earnings
-
-
                 calc_new_buy_price = (portfolio_data["price"] + stock["price"]) /2
                 new_share_count = portfolio_data["shares"] - shares
-                entry = StockEntry(price=calc_new_buy_price, shares=new_share_count, time=portfolio_data["time"])
+                entry = StockEntry(remainingCash=new_cash_balance, price=calc_new_buy_price, shares=new_share_count, time=portfolio_data["time"])
                 encoded = jsonable_encoder(entry)
                 await insert_portfolio(user_id, symbol, encoded)
                 await update_cash(user_id, new_cash_balance)
-                entry = HistoryEntry(symbol=symbol, shares=shares, buy=portfolio_data["price"], sell=stock["price"], buy_timestamp=portfolio_data["time"], sell_timestamp=time.time()) 
+                entry = HistoryEntry(symbol=symbol,isBuy='false', remainingCash=new_cash_balance, shares=shares, buy=portfolio_data["price"], sell=stock["price"], buy_timestamp=portfolio_data["time"], sell_timestamp=datetime.datetime.now().__str__()) 
                 o_id = str(uuid.uuid4()).replace("-", "")
                 encoded = jsonable_encoder(entry)
                 await insert_history(user_id, order_id=o_id, data=encoded)
@@ -50,7 +49,7 @@ async def sell_order(symbol: str, shares: int, user_id: str):
                 await remove_portfolio(user_id, symbol)
                 await update_cash(user_id, new_cash_balance)
                 print(portfolio_data)
-                entry = HistoryEntry(symbol=symbol, shares=shares, buy=portfolio_data["price"], sell=stock["price"], buy_timestamp=portfolio_data["time"], sell_timestamp=time.time()) 
+                entry = HistoryEntry(symbol=symbol,isBuy='false', shares=shares, remainingCash=new_cash_balance, buy=portfolio_data["price"], sell=stock["price"], buy_timestamp=portfolio_data["time"], sell_timestamp=datetime.datetime.now().__str__()) 
                 o_id = str(uuid.uuid4()).replace("-", "")
                 encoded = jsonable_encoder(entry)
                 await insert_history(user_id, order_id=o_id, data=encoded)
@@ -73,12 +72,20 @@ async def buy_order(symbol: str, shares: int, user_id: str):
                 await update_cash(user_id, new_cash_balance)
 
                 if portfolio_data != {}:
+                    o_id = str(uuid.uuid4()).replace("-", "")
                     new_buy_price = (stock["price"] + portfolio_data["price"]) / 2
-                    entry = StockEntry(price=new_buy_price, shares=portfolio_data["shares"] + shares, time=portfolio_data["time"])
+                    entry = StockEntry(remainingCash=new_cash_balance, price=new_buy_price, shares=portfolio_data["shares"] + shares, time=portfolio_data["time"])
+                    entry2 = HistoryEntry(remainingCash=new_cash_balance, symbol=symbol,isBuy='true', shares=shares, buy=stock["price"], sell=stock["price"], buy_timestamp=datetime.datetime.now().__str__(), sell_timestamp=datetime.datetime.now().__str__()) 
                     encoded = jsonable_encoder(entry)
+                    encoded2 = jsonable_encoder(entry2)
+                    await insert_history(user_id, order_id=o_id, data=encoded2)
                     await insert_portfolio(user_id, symbol, encoded)
                 else:
-                    entry = StockEntry(price=stock["price"], shares=shares, time=time.time())
+                    o_id = str(uuid.uuid4()).replace("-", "")
+                    entry = StockEntry(remainingCash=new_cash_balance, price=stock["price"], shares=shares, time=datetime.datetime.now().__str__())
+                    entry2 = HistoryEntry(remainingCash=new_cash_balance, symbol=symbol,isBuy='true', shares=shares, buy=stock["price"], sell=stock["price"], buy_timestamp=datetime.datetime.now().__str__(), sell_timestamp=datetime.datetime.now().__str__()) 
+                    encoded2 = jsonable_encoder(entry2)
+                    await insert_history(user_id, order_id=o_id, data=encoded2)
                     encoded = jsonable_encoder(entry)
                     await insert_portfolio(user_id, symbol, encoded)
                 

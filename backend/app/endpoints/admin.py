@@ -3,13 +3,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.encoders import jsonable_encoder
 import time
-
+import json
+from bson import json_util, ObjectId
+from fastapi.responses import JSONResponse
 from ..lib.models import CreateStockIn
 from ..lib.models import AdminLoginIn, CreateAdminIn
-from ..dao.admin import Admin, UpdateAdmin, add_admin, retrieve_admin
+from ..dao.admin import Admin, UpdateAdmin, add_admin, retrieve_admin, get_admin
 from ..dao.user import User, get_users, delete_user, update_user
 from app.lib.utils import *
 from app.dao.user import user_helper
+from app.lib.models import LoginIn, UserID
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -84,3 +87,12 @@ async def delete_user_endpoint(id: str, response: Response, token: str = Depends
         return {"data": "User deleted"}
     response.status_code = status.HTTP_404_NOT_FOUND
     return {"error": "User not found"}
+
+
+@admin_router.post("/getAdminByID")
+async def getAdminByID(payload: UserID, response: Response):
+    result = await get_admin(payload.id)
+    if "error" in result.keys():
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return result
+    return JSONResponse(json.loads(json_util.dumps(result)));

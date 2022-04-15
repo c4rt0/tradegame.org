@@ -1,15 +1,20 @@
+from app.lib.database import database
+import json
 from fastapi import Response, status, APIRouter, status, Depends, Header
 from werkzeug.security import generate_password_hash, check_password_hash
 import time
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer
 
+from app.lib.alpaca import add_Symbol, get_stocks_from_db
+from bson import json_util, ObjectId
 from ..lib.models import CreateStockIn
 from ..lib.models import Order
 from ..dao.admin import Admin, UpdateAdmin, add_admin, retrieve_admin
 from ..dao.user import User, get_users, delete_user, update_user
 from ..lib.order import sell_order, buy_order
 from ..lib.utils import validate_token
+from fastapi.responses import JSONResponse
 
 
 trade_router = APIRouter(
@@ -31,16 +36,36 @@ async def place_order(payload: Order, response: Response, token: str = Depends(o
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"details": "Invalid token"}
 
-    user_id = is_token_valid[0]["userid"]
-    if payload.is_buy:
+    available_stocks = await get_stocks_from_db()
+    flag='false';
+    for stock in available_stocks:
+
+     if stock["symbol"] == payload.symbol:
+        flag='true';
+        await updateAhead(payload,response,token);
+
+    if(flag=='false'):
+      await add_Symbol(payload.symbol);
+      await updateAhead(payload,response,token);
+
+@trade_router.post("/stocks")
+async def get_stocks():
+    result=await database["stocks"].find().to_list(1000);
+    return JSONResponse(json.loads(json_util.dumps(result)));
+
+
+
+async def updateAhead(payload: Order,response: Response,token: str):
+   is_token_valid = validate_token(token)
+   user_id = is_token_valid[0]["userid"]
+   if payload.is_buy:
         result = await buy_order(payload.symbol, payload.shares, user_id)
         if  "error" in result.keys():
             response.status_code = status.HTTP_400_BAD_REQUEST
             return result
         response.status_code = status.HTTP_200_OK
         return result
-
-    if not payload.is_buy:
+   if not payload.is_buy:
         result = await sell_order(payload.symbol, payload.shares, user_id)
         if "error" in result.keys():
             response.status_code = status.HTTP_400_BAD_REQUEST
@@ -48,6 +73,7 @@ async def place_order(payload: Order, response: Response, token: str = Depends(o
         response.status_code = status.HTTP_200_OK
         return result
 
-    response.status_code = status.HTTP_400_BAD_REQUEST
-    return {"error": "order type not specified"}
+   response.status_code = status.HTTP_400_BAD_REQUEST
+   return {"error": "order type not specified"}
+
 
