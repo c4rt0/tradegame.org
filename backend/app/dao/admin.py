@@ -42,5 +42,13 @@ async def delete_admin(id: str):
         await database["admin"].delete_one({"_id": ObjectId(id)})
         return True
 
+async def get_admin(id: str) -> dict:
+        admin = await database["admin"].find_one({"_id": ObjectId(id)})
+        if admin:
+            return admin
+            
 async def get_users():
     users = await database["users"].find().to_list(1000)
+
+
+    

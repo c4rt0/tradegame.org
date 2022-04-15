@@ -12,4 +12,6 @@ backend/tradegame_venv/
 # Files
 backend/.env
 backend/requirements2.txt
-
+backend/venv/
+__pycache__
+.DS_Store

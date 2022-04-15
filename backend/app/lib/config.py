@@ -14,6 +14,7 @@ def set_env(data):
     os.environ["database_url"] = data["database"]["url"]
     os.environ["database_name"] = data["database"]["database_name"]
 
+    os.environ["admin_token"] = data["Service"]["admin_token"]
     os.environ["jwt_secret"] = data["Service"]["jwt_secret"]
     os.environ["jwt_algo"] = data["Service"]["jwt_algo"]
     

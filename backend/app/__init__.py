@@ -4,7 +4,6 @@ from fastapi import FastAPI, Request, Depends
 from fastapi_utils.tasks import repeat_every
 
 from app.lib.config import parse_config
-from app.lib.database import collection
 from dotenv import load_dotenv
 from app.endpoints.admin import admin_router
 from app.endpoints.trade import trade_router
@@ -36,10 +35,6 @@ origins = [
     "http://localhost",
     "http://localhost:3000"
 ]
-
-print(f'          ')
-print(f'          Visit API docs at: {origins[1]}/docs')
-print(f'          ')
 
 app.add_middleware(
     CORSMiddleware,
