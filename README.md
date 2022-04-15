@@ -4,11 +4,15 @@
 
 1. Install MongoDB
 
-Fedora 35 + installation instructioncan be found [HERE](https://c4rt0.github.io/Fedora/), on my GitHub Pages.
+Fedora 35 MongoDB installation instruction can be found [HERE](https://c4rt0.github.io/Fedora/), on my GitHub Pages.
+
+2. Install Docker
+
+3. Install docker-compose
 
 #### B. Python/FastAPI Backend
 
-1. Create virtual environment (called "farm_env" or whatever you like) using the requirements.txt
+1. Create virtual environment (called "trade_env" or whatever you like)
 
 ```bash
 python3 -m venv trade_env
@@ -46,12 +50,6 @@ If pip doesnt work, use code below and run pip install again:
 python -m pip install -U --force pip
 ```
 
-6. Deactivate the virtual environment
-
-```bash
-deactivate
-```
-
 #### C. React Frontend
 
 1. Install [Node Package Manager (npm)](https://www.npmjs.com/get-npm)
@@ -69,25 +67,47 @@ npm install
 #### A. MongoDB Database
 
 1. Navigate to the root directory (where the three directories backend, database and frontend are present) or start your existing MongoDB server
+
 2. Make sure you have MongoDB installed on your machine and system variable path is set correctly.
 
 Again: [GitHub Pages](https://c4rt0.github.io/Fedora/) regarding MongoDB installation on Fedora 35.
 
-3. Start MongoDB server
+Remember to set up the MongoDB URL and db-name in the /TG-backend/toml.conf file
+
+3. Start MongoDB server with mongod
 
 ```bash
 mongod --dbpath=database
 ```
 
-4. The MongoDB server will be hosted at its default port 27017
+OR
+
+Run :
+
+```bash
+docker-compose up
+```
+
+This will spin your Docker container with the mongoDB running on it.
+
+(if you modified the docker-compose.yml - also remember to make sure it agrees with the .toml file)
+
+4. The MongoDB server will be hosted at its default port
 
 #### B. Python/FastAPI Backend
 
 1. Navigate into /backend directory (where main.py is present)
+
 2. Activate the virtual environemnt
 
 ```bash
 trade_env\Scripts\activate.bat
+```
+
+or
+
+```bash
+trade_env/bin/activate
 ```
 
 3. Start FastAPI server
@@ -108,7 +128,7 @@ python -m uvicorn main:app --reload
 ERROR:    Error loading ASGI app. Could not import module "app".
 ```
 
-It probably means your database is not running, or you are trying to execute uvicorn server in the incorrect directory. Your new MongoDB installation might require super user privelages.
+It probably means your database is not running, or you are trying to execute uvicorn server while (with cmd) beeing in the incorrect directory. Your new MongoDB installation might also require super user privelages.
 
 Try:
 
@@ -130,11 +150,9 @@ then:
 sudo mongod --dbpath=database
 ```
 
-Also, make sure your .env file is set up according to provided intructions, and your remote MongoDB Cluster (https://cloud.mongodb.com/) is up and running.
+4. The FastAPI server will be hosted at its default port 3000
 
-4. The FastAPI server will be hosted at its default port 8000
-
-5. To access SwaggerUI for API testing and documentation, goto [http://localhost:8000/docs](http://localhost:8000/docs)
+5. To access SwaggerUI for API testing and documentation, goto [http://localhost:3000/docs](http://localhost:3000/docs)
 
 #### C. React Frontend
 
@@ -145,4 +163,4 @@ Also, make sure your .env file is set up according to provided intructions, and 
 npm start
 ```
 
-3. The React web application will be hosted at its default port 3000, goto [http://localhost:3000/](http://localhost:3000/)
+3. The React web application will be hosted at its default port 8000, goto [http://localhost:8000/](http://localhost:8000/)
