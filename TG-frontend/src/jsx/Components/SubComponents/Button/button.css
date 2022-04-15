@@ -1,0 +1,44 @@
+.storybook-button--primary {
+  color: white;
+  border : "none";
+  border-radius: none;
+  font-weight: lighter;
+  letter-spacing: 1px;
+}
+.storybook-button--secondary {
+  color: rgb(0, 0, 0);
+  border-radius: 10px;
+  font-weight:500;
+}
+.storybook-button--highRoundness {
+  color: rgb(255, 255, 255);
+  border-radius: 40px;
+  font-weight:500;
+}
+.storybook-button--highRoundness:hover{
+  background: rgba(235, 235, 235, 0.2);
+}
+.storybook-button--lowRoundness {
+  color: rgb(255, 255, 255);
+  border-radius: 10px;
+  font-weight:500;
+}
+.storybook-button--small {
+  font-size: 12px;
+}
+.storybook-button--medium {
+  font-size: 14px;
+}
+.storybook-button--large {
+  font-size: 16px;
+  text-align: center;
+}
+.storybook-button--black{
+  color: black
+}
+.storybook-button--white{
+  color : white
+}
+.storybook-button--black:hover{
+  background: rgba(177, 177, 177, 0.3);
+}
