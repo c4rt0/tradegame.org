@@ -63,13 +63,13 @@ try:
     import ssl
     from ssl import SSLContext
 except ImportError:  # pragma: no cover
-    ssl = None  # type: ignore[assignment]
-    SSLContext = object  # type: ignore[misc,assignment]
+    ssl = None  # type: ignore
+    SSLContext = object  # type: ignore
 
 try:
     import cchardet as chardet
 except ImportError:  # pragma: no cover
-    import charset_normalizer as chardet  # type: ignore[no-redef]
+    import chardet  # type: ignore
 
 
 __all__ = ("ClientRequest", "ClientResponse", "RequestInfo", "Fingerprint")
@@ -311,7 +311,7 @@ class ClientRequest:
         self.update_proxy(proxy, proxy_auth, proxy_headers)
 
         self.update_body_from_data(data)
-        if data is not None or self.method not in self.GET_METHODS:
+        if data or self.method not in self.GET_METHODS:
             self.update_transfer_encoding()
         self.update_expect_continue(expect100)
         if traces is None:
@@ -399,9 +399,9 @@ class ClientRequest:
 
         if headers:
             if isinstance(headers, (dict, MultiDictProxy, MultiDict)):
-                headers = headers.items()  # type: ignore[assignment]
+                headers = headers.items()  # type: ignore
 
-            for key, value in headers:  # type: ignore[misc]
+            for key, value in headers:  # type: ignore
                 # A special case for Host header
                 if key.lower() == "host":
                     self.headers[key] = value
@@ -413,7 +413,7 @@ class ClientRequest:
             (hdr, None) for hdr in sorted(skip_auto_headers)
         )
         used_headers = self.headers.copy()
-        used_headers.extend(self.skip_auto_headers)  # type: ignore[arg-type]
+        used_headers.extend(self.skip_auto_headers)  # type: ignore
 
         for hdr, val in self.DEFAULT_HEADERS.items():
             if hdr not in used_headers:
@@ -435,7 +435,7 @@ class ClientRequest:
         if isinstance(cookies, Mapping):
             iter_cookies = cookies.items()
         else:
-            iter_cookies = cookies  # type: ignore[assignment]
+            iter_cookies = cookies  # type: ignore
         for name, value in iter_cookies:
             if isinstance(value, Morsel):
                 # Preserve coded_value
@@ -443,13 +443,13 @@ class ClientRequest:
                 mrsl_val.set(value.key, value.value, value.coded_value)
                 c[name] = mrsl_val
             else:
-                c[name] = value  # type: ignore[assignment]
+                c[name] = value  # type: ignore
 
         self.headers[hdrs.COOKIE] = c.output(header="", sep=";").strip()
 
     def update_content_encoding(self, data: Any) -> None:
         """Set request content encoding."""
-        if data is None:
+        if not data:
             return
 
         enc = self.headers.get(hdrs.CONTENT_ENCODING, "").lower()
@@ -499,7 +499,7 @@ class ClientRequest:
         self.headers[hdrs.AUTHORIZATION] = auth.encode()
 
     def update_body_from_data(self, body: Any) -> None:
-        if body is None:
+        if not body:
             return
 
         # FormData
@@ -547,6 +547,8 @@ class ClientRequest:
         proxy_auth: Optional[BasicAuth],
         proxy_headers: Optional[LooseHeaders],
     ) -> None:
+        if proxy and not proxy.scheme == "http":
+            raise ValueError("Only http proxies are supported")
         if proxy_auth and not isinstance(proxy_auth, helpers.BasicAuth):
             raise ValueError("proxy_auth must be None or BasicAuth() tuple")
         self.proxy = proxy
@@ -583,10 +585,10 @@ class ClientRequest:
                 await self.body.write(writer)
             else:
                 if isinstance(self.body, (bytes, bytearray)):
-                    self.body = (self.body,)  # type: ignore[assignment]
+                    self.body = (self.body,)  # type: ignore
 
                 for chunk in self.body:
-                    await writer.write(chunk)  # type: ignore[arg-type]
+                    await writer.write(chunk)  # type: ignore
 
             await writer.write_eof()
         except OSError as exc:
@@ -629,9 +631,6 @@ class ClientRequest:
             self.loop,
             on_chunk_sent=functools.partial(
                 self._on_chunk_request_sent, self.method, self.url
-            ),
-            on_headers_sent=functools.partial(
-                self._on_headers_request_sent, self.method, self.url
             ),
         )
 
@@ -701,12 +700,6 @@ class ClientRequest:
     async def _on_chunk_request_sent(self, method: str, url: URL, chunk: bytes) -> None:
         for trace in self._traces:
             await trace.send_request_chunk_sent(method, url, chunk)
-
-    async def _on_headers_request_sent(
-        self, method: str, url: URL, headers: "CIMultiDict[str]"
-    ) -> None:
-        for trace in self._traces:
-            await trace.send_request_headers(method, url, headers)
 
 
 class ClientResponse(HeadersMixin):
@@ -876,7 +869,7 @@ class ClientResponse(HeadersMixin):
 
                 link.add(key, value)
 
-            key = link.get("rel", url)  # type: ignore[assignment]
+            key = link.get("rel", url)  # type: ignore
 
             link.add("url", self.url.join(URL(url)))
 
@@ -894,8 +887,7 @@ class ClientResponse(HeadersMixin):
             while True:
                 # read response
                 try:
-                    protocol = self._protocol
-                    message, payload = await protocol.read()  # type: ignore[union-attr]
+                    message, payload = await self._protocol.read()  # type: ignore
                 except http.HttpProcessingError as exc:
                     raise ClientResponseError(
                         self.request_info,
@@ -994,10 +986,14 @@ class ClientResponse(HeadersMixin):
         This is **not** a check for ``200 OK`` but a check that the response
         status is under 400.
         """
-        return 400 > self.status
+        try:
+            self.raise_for_status()
+        except ClientResponseError:
+            return False
+        return True
 
     def raise_for_status(self) -> None:
-        if not self.ok:
+        if 400 <= self.status:
             # reason should always be not None for a started response
             assert self.reason is not None
             self.release()
@@ -1044,7 +1040,7 @@ class ClientResponse(HeadersMixin):
         elif self._released:
             raise ClientConnectionError("Connection closed")
 
-        return self._body  # type: ignore[no-any-return]
+        return self._body
 
     def get_encoding(self) -> str:
         ctype = self.headers.get(hdrs.CONTENT_TYPE, "").lower()
@@ -1082,9 +1078,7 @@ class ClientResponse(HeadersMixin):
         if encoding is None:
             encoding = self.get_encoding()
 
-        return self._body.decode(  # type: ignore[no-any-return,union-attr]
-            encoding, errors=errors
-        )
+        return self._body.decode(encoding, errors=errors)  # type: ignore
 
     async def json(
         self,
@@ -1109,7 +1103,7 @@ class ClientResponse(HeadersMixin):
                     headers=self.headers,
                 )
 
-        stripped = self._body.strip()  # type: ignore[union-attr]
+        stripped = self._body.strip()  # type: ignore
         if not stripped:
             return None
 

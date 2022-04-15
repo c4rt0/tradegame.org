@@ -11,7 +11,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     AsyncIterator,
-    Deque,
     Dict,
     Iterator,
     List,
@@ -21,7 +20,6 @@ from typing import (
     Tuple,
     Type,
     Union,
-    cast,
 )
 from urllib.parse import parse_qsl, unquote, urlencode
 
@@ -154,7 +152,7 @@ def parse_content_disposition(
             elif parts:
                 # maybe just ; in filename, in any case this is just
                 # one case fix, for proper fix we need to redesign parser
-                _value = f"{value};{parts[0]}"
+                _value = "{};{}".format(value, parts[0])
                 if is_quoted(_value):
                     parts.pop(0)
                     value = unescape(_value[1:-1].lstrip("\\/"))
@@ -242,10 +240,8 @@ class MultipartResponseWrapper:
         return item
 
     async def release(self) -> None:
-        """Release the connection gracefully.
-
-        All remaining content is read to the void.
-        """
+        """Releases the connection gracefully, reading all the content
+        to the void."""
         await self.resp.release()
 
 
@@ -265,13 +261,13 @@ class BodyPartReader:
         self._length = int(length) if length is not None else None
         self._read_bytes = 0
         # TODO: typeing.Deque is not supported by Python 3.5
-        self._unread: Deque[bytes] = deque()
+        self._unread = deque()  # type: Any
         self._prev_chunk = None  # type: Optional[bytes]
         self._content_eof = 0
         self._cache = {}  # type: Dict[str, Any]
 
     def __aiter__(self) -> AsyncIterator["BodyPartReader"]:
-        return self  # type: ignore[return-value]
+        return self  # type: ignore
 
     async def __anext__(self) -> bytes:
         part = await self.next()
@@ -415,10 +411,12 @@ class BodyPartReader:
         if not data:
             return None
         encoding = encoding or self.get_charset(default="utf-8")
-        return cast(Dict[str, Any], json.loads(data.decode(encoding)))
+        return json.loads(data.decode(encoding))
 
     async def form(self, *, encoding: Optional[str] = None) -> List[Tuple[str, str]]:
-        """Like read(), but assumes that body parts contain form urlencoded data."""
+        """Like read(), but assumes that body parts contains form
+        urlencoded data.
+        """
         data = await self.read(decode=True)
         if not data:
             return []
@@ -437,9 +435,7 @@ class BodyPartReader:
         return self._at_eof
 
     def decode(self, data: bytes) -> bytes:
-        """Decodes data.
-
-        Decoding is done according the specified Content-Encoding
+        """Decodes data according the specified Content-Encoding
         or Content-Transfer-Encoding headers value.
         """
         if CONTENT_TRANSFER_ENCODING in self.headers:
@@ -482,18 +478,17 @@ class BodyPartReader:
 
     @reify
     def name(self) -> Optional[str]:
-        """Returns name specified in Content-Disposition header.
-
-        If the header is missing or malformed, returns None.
+        """Returns name specified in Content-Disposition header or None
+        if missed or header is malformed.
         """
+
         _, params = parse_content_disposition(self.headers.get(CONTENT_DISPOSITION))
         return content_disposition_filename(params, "name")
 
     @reify
     def filename(self) -> Optional[str]:
-        """Returns filename specified in Content-Disposition header.
-
-        Returns None if the header is missing or malformed.
+        """Returns filename specified in Content-Disposition header or None
+        if missed or header is malformed.
         """
         _, params = parse_content_disposition(self.headers.get(CONTENT_DISPOSITION))
         return content_disposition_filename(params, "filename")
@@ -546,7 +541,7 @@ class MultipartReader:
     def __aiter__(
         self,
     ) -> AsyncIterator["BodyPartReader"]:
-        return self  # type: ignore[return-value]
+        return self  # type: ignore
 
     async def __anext__(
         self,
@@ -571,7 +566,9 @@ class MultipartReader:
         return obj
 
     def at_eof(self) -> bool:
-        """Returns True if the final boundary was reached, false otherwise."""
+        """Returns True if the final boundary was reached or
+        False otherwise.
+        """
         return self._at_eof
 
     async def next(
@@ -611,9 +608,8 @@ class MultipartReader:
         self,
         headers: "CIMultiDictProxy[str]",
     ) -> Union["MultipartReader", BodyPartReader]:
-        """Dispatches the response by the `Content-Type` header.
-
-        Returns a suitable reader instance.
+        """Dispatches the response by the `Content-Type` header, returning
+        suitable reader instance.
 
         :param dict headers: Response headers
         """
@@ -832,7 +828,7 @@ class MultipartWriter(Payload):
         if size is not None and not (encoding or te_encoding):
             payload.headers[CONTENT_LENGTH] = str(size)
 
-        self._parts.append((payload, encoding, te_encoding))  # type: ignore[arg-type]
+        self._parts.append((payload, encoding, te_encoding))  # type: ignore
         return payload
 
     def append_json(
@@ -897,7 +893,7 @@ class MultipartWriter(Payload):
                     w.enable_compression(encoding)
                 if te_encoding:
                     w.enable_encoding(te_encoding)
-                await part.write(w)  # type: ignore[arg-type]
+                await part.write(w)  # type: ignore
                 await w.write_eof()
             else:
                 await part.write(writer)
@@ -922,11 +918,9 @@ class MultipartPayloadWriter:
         elif encoding == "quoted-printable":
             self._encoding = "quoted-printable"
 
-    def enable_compression(
-        self, encoding: str = "deflate", strategy: int = zlib.Z_DEFAULT_STRATEGY
-    ) -> None:
+    def enable_compression(self, encoding: str = "deflate") -> None:
         zlib_mode = 16 + zlib.MAX_WBITS if encoding == "gzip" else -zlib.MAX_WBITS
-        self._compress = zlib.compressobj(wbits=zlib_mode, strategy=strategy)
+        self._compress = zlib.compressobj(wbits=zlib_mode)
 
     async def write_eof(self) -> None:
         if self._compress is not None:
