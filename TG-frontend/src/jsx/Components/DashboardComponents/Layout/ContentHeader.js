@@ -11,6 +11,8 @@ export default function ContentHeader(props) {
           <div className="cursor-pointer">Home</div>
         </div>
       </div>
+
+      {/* <hr className="text-gray_200 mt-2 mb-16" /> */}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import MetisMenu from "@metismenu/react";
 import "metismenujs/dist/metismenujs.css";
 import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import { useDispatch } from "react-redux";
+import LoyaltyRoundedIcon from "@material-ui/icons/LoyaltyRounded";
 import { Logout } from "../../../../Store/Actions/Auth/authAction";
 
 const SideBar = (props) => {
@@ -23,7 +24,7 @@ const SideBar = (props) => {
     >
       <div className="hidden lg:block px-8 py-6 flex justify-center items-center bg-gray_200 ">
         <NavLink
-          to={"/"}
+          to={"/loading"}
           className="text-black md:text-3xl font-bold font-sans"
         >
           tradegame.org
@@ -47,7 +48,24 @@ const SideBar = (props) => {
               <span>Dashboard</span>
             </NavLink>
           </li>
+          <li>
+            <NavLink to="ranking" exact className="main">
+              <LoyaltyRoundedIcon
+                style={{ fontSize: "20px", marginRight: "8px" }}
+              ></LoyaltyRoundedIcon>
+              <span>Ranking</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="info" exact className="main">
+              <LoyaltyRoundedIcon
+                style={{ fontSize: "20px", marginRight: "8px" }}
+              ></LoyaltyRoundedIcon>
+              <span>Info</span>
+            </NavLink>
+          </li>
         </MetisMenu>
+
         <div
           onClick={() => onLogout()}
           className="text-red_900 py-3 px-6 mx-8 flex items-center gap-3 hover:bg-gray_50 rounded-lg text-lg font-semibold"

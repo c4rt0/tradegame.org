@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 import { Avatar } from "@progress/kendo-react-layout";
+import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import { NavLink } from "react-router-dom";
 import MenuOutlinedIcon from "@material-ui/icons/MenuOutlined";
 import ArrowDropDownRoundedIcon from "@material-ui/icons/ArrowDropDownRounded";
 import PersonOutlineRoundedIcon from "@material-ui/icons/PersonOutlineRounded";
 import { UserDropDown } from "./UserDropdown";
 import Dropdown from "./../../SubComponents/Dropdown";
+import { useDispatch } from "react-redux";
+import { resetUserAccount } from "../../../../Store/Actions/Auth/authAction";
+import { isAdminRole } from "./../../../../Store/selectors/roleSelector";
 import ModalComp from "../../SubComponents/ModalComp";
-
+import { ResetConfirmModal } from "./resetConfirmModal";
 const DashboardNavbar = (props) => {
   const [showDropdown, setShowDropdown] = React.useState(false);
   const [showModal, setShowModal] = useState(false);
+  let dispatch = useDispatch();
 
+  const resetUser = () => {
+    let userId = localStorage.getItem("userId");
+    dispatch(resetUserAccount(userId));
+    setShowModal(false);
+  };
   return (
     <div
       className={`relative bg-white shadow-sm px-4 gap-3 flex flex-col lg:flex-row lg:items-center justify-center lg:justify-end h-32 lg:h-20`}
@@ -19,7 +29,7 @@ const DashboardNavbar = (props) => {
       <div className="flex lg:hidden justify-between items-center w-full">
         <div className="">
           <NavLink
-            to={"/"}
+            to={"/loading"}
             className="text-black md:text-2xl font-bold font-sans"
           >
             tradegame.org
@@ -36,6 +46,24 @@ const DashboardNavbar = (props) => {
       </div>
       <hr className="text-gray_200" />
       <div className="flex justify-between lg:justify-end items-center w-full gap-x-4">
+        {!isAdminRole() && (
+          <button
+            onClick={() => {
+              setShowModal(true);
+            }}
+            className="flex gap-2 px-4 py-2 items-center text-white rounded-full text-sm bg-black cursor-pointer"
+            style={{ boxShadow: "-1px 2px 10px 1px lightGrey" }}
+          >
+            <span>Reset Account</span>
+            <AddCircleOutlineOutlinedIcon
+              style={{
+                fontSize: "20px",
+                fontWeight: "200px",
+                color: "#FBBF24"
+              }}
+            />
+          </button>
+        )}
         <div className="flex items-center relative">
           <Avatar
             rounded="large"
@@ -75,7 +103,12 @@ const DashboardNavbar = (props) => {
           }}
           width={500}
           height={300}
-        ></ModalComp>
+        >
+          <ResetConfirmModal
+            resetUser={resetUser}
+            setOpenModal={setShowModal}
+          />
+        </ModalComp>
       )}
     </div>
   );

@@ -4,4 +4,4 @@ export const portfolioColumns = [
   "Quantity",
   "Current value",
   "Total shares value"
-]
+];

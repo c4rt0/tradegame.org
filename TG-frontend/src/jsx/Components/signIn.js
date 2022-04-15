@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./SubComponents/Button/Button";
 import { useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import { loginUser } from "./../../Store/Actions/Auth/authAction";
 export const SignInForm = () => {
   let dispatch = useDispatch();
   let history = useHistory();
+  const [isAdminState, setIsAdmin] = useState(false);
   const { register, reset, handleSubmit } = useForm({
     mode: "onSubmit",
     reValidateMode: "onChange"
@@ -17,8 +18,10 @@ export const SignInForm = () => {
     handleSubmit(validFormSubmit)();
   };
   const validFormSubmit = (data) => {
+    data = { ...data, isAdmin: isAdminState };
     dispatch(loginUser(data, history));
     reset();
+    setIsAdmin(false);
   };
   return (
     <div>
