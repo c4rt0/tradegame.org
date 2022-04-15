@@ -20,11 +20,14 @@ load_dotenv()  # take environment variables from .env.
 
 # Initiating FastAPI Server
 app = FastAPI()
+
+
 @app.on_event("startup")
-@repeat_every(seconds=60 * 60)  # 1 hour
+@repeat_every(seconds=60 * 5)  # 60 * 60 = 1 hour
 async def update_stock_data() -> None:
     parse_config()
     await update_stock()
+
 
 app.include_router(admin_router)
 app.include_router(trade_router)
@@ -32,19 +35,16 @@ app.include_router(leaderboard)
 app.include_router(user_router)
 
 # # Managing CORS for the React Frontend connections
-origins = [
-    "http://localhost",
-    "http://localhost:3000"
-]
+origins = ["http://localhost", "http://localhost:3000"]
 
-print(f'          ')
-print(f'          Visit API docs at: {origins[1]}/docs')
-print(f'          ')
+print(f"          ")
+print(f"          Visit API docs at: {origins[1]}/docs")
+print(f"          ")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )

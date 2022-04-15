@@ -2,6 +2,7 @@ from fastapi import Response, status, APIRouter, status, Depends, Header
 from werkzeug.security import generate_password_hash
 from fastapi.security import OAuth2PasswordBearer
 import json
+import datetime
 from bson import json_util, ObjectId
 
 from app.lib.alpaca import add_Symbol, get_stocks_from_db
@@ -39,7 +40,7 @@ async def login(payload: LoginIn, response: Response):
 @user_router.post("/register")
 async def create_user(payload: UserIn, response: Response):
     hashed_password = generate_password_hash(payload.password, method='sha256')
-    new_user = UpdateUser(isLogIn=False, username=payload.username, email=payload.email, password=hashed_password, created=time.time(),)
+    new_user = UpdateUser(isLogIn=False, username=payload.username, email=payload.email, password=hashed_password, created=datetime.datetime.now().__str__(),)
     encoded = jsonable_encoder(new_user)
     result = await add_user(encoded)
     if "error" in result.keys():
@@ -51,7 +52,7 @@ async def create_user(payload: UserIn, response: Response):
 
 @user_router.post("/updateUser")
 async def updateUser(payload: UserUp, response: Response):
-    new_user = UpdateUser( username=payload.username, email=payload.email,  updated=time.time(),)
+    new_user = UpdateUser( username=payload.username, email=payload.email, cash=payload.cash,  updated=time.time(),)
     encoded = jsonable_encoder(new_user)
     result = await update_user(payload.id, new_user)
     if result==False:
@@ -61,14 +62,16 @@ async def updateUser(payload: UserUp, response: Response):
 
 @user_router.post("/updateUserPassword")
 async def updateUserPassword(payload: UserUpPass, response: Response):
-    hashed_password = generate_password_hash(payload.password, method='sha256')
-    new_user = UpdateUserPass(password = hashed_password)
-    encoded = jsonable_encoder(new_user)
-    result = await update_user_pass(payload.id, new_user)
-    if result==False:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return result
-    return {"details": "success"}
+    if not payload.password:
+        return False
+    else:
+        hashed_password = generate_password_hash(payload.password, method='sha256')
+        new_user = UpdateUserPass(password = hashed_password)
+        result = await update_user_pass(payload.id, new_user)
+        if result==False:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            return result
+        return {"details": "success"}
 
 @user_router.post("/ressetAccount")
 async def ressetAccount(payload: UserLogUp, response: Response):
@@ -136,7 +139,7 @@ async def getAllUsers( response: Response):
     result = await get_users()
     return JSONResponse(json.loads(json_util.dumps(result)));
 
-@user_router.delete("/deleteUserById")
+@user_router.post("/deleteUserById")
 async def deleteUserById( payload: UserID, response: Response):
     result = await delete_user(payload.id)
     return JSONResponse(json.loads(json_util.dumps(result)));
