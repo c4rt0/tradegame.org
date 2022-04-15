@@ -2,7 +2,7 @@
 backend/__pycache__/
 backend/.pytest_cache
 .mongo-volume
-
+node_modules/
 database/
 
 frontend/node_modules/
