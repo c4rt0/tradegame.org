@@ -5,6 +5,9 @@ export function signUp(data) {
   return axios.post(`${BaseUrl}/user/register`, data);
 }
 
+export function adminLogin(data) {
+  return axios.post(`${BaseUrl}/admin/login`, data);
+}
 export function login(data) {
   return axios.post(`${BaseUrl}/user/login`, data);
 }
@@ -13,6 +16,18 @@ export function getUser(userId) {
   const tokenDetailsString = localStorage.getItem("tokenDetails");
   return axios.post(
     `${BaseUrl}/user/getUserByID`,
+    { id: userId },
+    {
+      headers: {
+        Authorization: `Bearer ${tokenDetailsString.replace('"', "")}`
+      }
+    }
+  );
+}
+export function getAdmin(userId) {
+  const tokenDetailsString = localStorage.getItem("tokenDetails");
+  return axios.post(
+    `${BaseUrl}/admin/getAdminByID`,
     { id: userId },
     {
       headers: {
