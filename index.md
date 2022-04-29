@@ -17,22 +17,22 @@ including instructions regarding installation and local deployment.
 
 ### The view of currently developed pages
 
-1. Dashboard
+* Dashboard
 
 ![Image](/images/Dashboard.png)
 
-2. Current view of SwaggerUI for the backend
+* SwaggerUI of the backend (http://localhost:8000/docs)
 
 ![Image](/images/FastAPISwaggerUI.png)
 
-3. Info page
+* Info page
 
 ![Image](/images/Info.png)
 
-4. Ranking page
+* Ranking page
 
 ![Image](/images/Ranking.png)
 
-5. Settings page
+* Settings page
 
 ![Image](/images/Settings.png)
