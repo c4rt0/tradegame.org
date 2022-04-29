@@ -21,6 +21,10 @@ including instructions regarding installation and local deployment.
 
 ![Image](/images/Dashboard.png)
 
+* Admin page
+
+![Image](/images/AdminPage.png)
+
 * SwaggerUI of the backend (http://localhost:8000/docs)
 
 ![Image](/images/FastAPISwaggerUI.png)
