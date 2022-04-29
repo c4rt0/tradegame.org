@@ -15,5 +15,24 @@ including instructions regarding installation and local deployment.
 ### Website
 [Link to a website](http://www.tradegame.org) which is deployed based on code from the repo above.
 
+### The view of currently developed pages
 
-[Image](src)
+1. Dashboard
+
+![Image](/images/Dashboard.png)
+
+2. Current view of SwaggerUI for the backend
+
+![Image](/images/FastAPISwaggerUI.png)
+
+3. Info page
+
+![Image](/images/Info.png)
+
+4. Ranking page
+
+![Image](/images/Ranking.png)
+
+5. Settings page
+
+![Image](/images/Settings.png)
