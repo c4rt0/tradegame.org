@@ -13,7 +13,7 @@ Users who would like to start the game again can reset their portfolio back to t
 including instructions regarding installation and local deployment.
 
 ### Website
-[Link to a website](http://www.tradegame.org) which is deployed based on code from the repo above.
+[Link to a website](http://tradegame.org/) which is deployed based on code from the repo above.
 
 ### The view of currently developed pages
 
