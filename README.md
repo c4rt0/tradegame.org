@@ -1,3 +1,6 @@
+# Beware of vulnerability
+Since my final project is now graded, the time has come to ammend issues I faced during testing stage of deployed application. The most important is the low security on the mongoDB side allowing for some form of data extraction. My mongoDB database was constatnly exploited by unknown. Beware of this before pushing things into production.
+
 ## Setup Instructions
 
 #### A. MongoDB Database
